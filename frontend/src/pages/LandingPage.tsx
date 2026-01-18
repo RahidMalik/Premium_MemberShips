@@ -12,11 +12,13 @@ const LandingPage = () => {
             {/* Navbar */}
             <Navbar />
             <main>
+                {/* LandingPage */}
                 <Hero />
                 <MembershipConsole />
                 <MissionValues />
                 <MemberShipPicture />
             </main>
+            {/* Footer  */}
             <Footer />
         </div>
     );
