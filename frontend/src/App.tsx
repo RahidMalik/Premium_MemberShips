@@ -1,9 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import Navbar from "./components/layout/Navbar";
-import LandingPage from "./pages/LandingPage";
 import ContactUs from "./components/sections/Contact";
 import FeatureDetail from "./components/sections/FeatureDetail";
 import AboutPage from "./components/sections/AboutPage";
+import LandingPage from "./pages/LandingPage";
 // import Dashboard from "./pages/Dashboard";
 // import Login from "./pages/Login"; 
 
@@ -17,7 +16,6 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/features" element={<FeatureDetail />} />
 
-        {/* Login ke baad ye rasta use hoga */}
         {/* <Route path="/dashboard" element={<Dashboard />} /> */}
 
         {/* Aap mazeed raste yahan add kar sakte hain */}
