@@ -1,9 +1,11 @@
-import Hero from "@/components/sections/HeroSection";
 import Navbar from "@/components/layout/Navbar";
-import MembershipConsole from "@/components/sections/MembershipConsole";
-import MissionValues from "@/components/sections/MissionValues";
-import MemberShipPicture from "@/components/sections/MemberShipPic";
 import Footer from "@/components/layout/Footer";
+import HomeSection from "@/components/sections/Home/HomeDashboard";
+import Expertise from "@/components/sections/Home/Expertise";
+import WhyChooseUs from "@/components/sections/Home/WhyChooseUs";
+import FeaturesSection from "@/components/sections/Home/FeaturesSection";
+import EverythingEverywhere from "@/components/sections/Home/EverythingEverywhere";
+import PricingSection from "@/components/sections/Home/PricingSection";
 // import Features from "../components/sections/Features";
 
 const LandingPage = () => {
@@ -13,10 +15,12 @@ const LandingPage = () => {
             <Navbar />
             <main>
                 {/* LandingPage */}
-                <Hero />
-                <MembershipConsole />
-                <MissionValues />
-                <MemberShipPicture />
+                <HomeSection />
+                <Expertise />
+                <WhyChooseUs />
+                <FeaturesSection />
+                <EverythingEverywhere />
+                <PricingSection />
             </main>
             {/* Footer  */}
             <Footer />
