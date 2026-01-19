@@ -1,5 +1,5 @@
 "use client"
-import React from "react"
+
 import { Bar, BarChart, ResponsiveContainer, XAxis, Tooltip, } from "recharts"
 // Legend
 const data = [
@@ -12,7 +12,7 @@ const data = [
 
 export function MembershipChart() {
     return (
-        <div className="h-[300px] w-full p-4">
+        <div className="h-75 w-full p-4">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data} barGap={8}>
                     <XAxis
