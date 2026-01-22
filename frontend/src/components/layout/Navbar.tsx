@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useNavigate } from "react-router-dom"
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -12,7 +13,13 @@ const Navbar = () => {
         { name: "Our Features", href: "/features" },
         { name: "Contact Us", href: "/contact" },
     ]
-
+    const navigate = useNavigate();
+    const Login = () => {
+        navigate("/login")
+    }
+    const Register = () => {
+        navigate("/register")
+    }
     return (
         // 1. Navbar
         <nav className={`w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 
@@ -37,8 +44,8 @@ const Navbar = () => {
 
                     {/* 3. Desktop Buttons */}
                     <div className="hidden md:flex items-center gap-4">
-                        <button className="bg-[#2D8B8B] text-white px-6 py-2.5 rounded-full font-medium hover:bg-[#246e6e] transition-all shadow-md md:text-sm">Login</button>
-                        <button className="bg-[#2D8B8B] text-white px-6 py-2.5 rounded-full font-medium hover:bg-[#246e6e] transition-all shadow-md md:text-sm">
+                        <button onClick={Login} className="bg-[#2D8B8B] text-white px-6 py-2.5 rounded-full font-medium hover:bg-[#246e6e] transition-all shadow-md md:text-sm">Login</button>
+                        <button onClick={Register} className="bg-[#2D8B8B] text-white px-6 py-2.5 rounded-full font-medium hover:bg-[#246e6e] transition-all shadow-md md:text-sm">
                             Start Free Trial
                         </button>
                     </div>
@@ -68,8 +75,8 @@ const Navbar = () => {
                                 </a>
                             ))}
                             <div className="flex flex-col gap-3 pt-4 pb-4">
-                                <button className="bg-[#2D8B8B] text-white px-6 py-2.5 rounded-xl hover:bg-[#246e6e] transition-all shadow-md font-bold">Login</button>
-                                <button className="bg-[#2D8B8B] text-white px-6 py-2.5 rounded-xl hover:bg-[#246e6e] transition-all shadow-md font-bold">Start Free Trial</button>
+                                <button onClick={Login} className="bg-[#2D8B8B] text-white px-6 py-2.5 rounded-xl hover:bg-[#246e6e] transition-all shadow-md font-bold">Login</button>
+                                <button onClick={Register} className="bg-[#2D8B8B] text-white px-6 py-2.5 rounded-xl hover:bg-[#246e6e] transition-all shadow-md font-bold">Start Free Trial</button>
                             </div>
                         </div>
                     </motion.div>
