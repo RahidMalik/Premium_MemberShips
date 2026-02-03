@@ -1,48 +1,50 @@
 import { FacebookSignUp } from '@/Utilities/FacebookAutho';
 import { loginWithGoogle } from '@/Utilities/GoogleAutho';
-import axios from 'axios';
-import { useState, type FormEvent } from 'react';
-import toast from 'react-hot-toast';
+import { useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { Eye, EyeOff } from 'lucide-react';
 
 
 const LoginPage = () => {
-    const [email, setEmail] = useState<string>("");
-    const [Password, setPassword] = useState<string>("");
+    const [show, setShow] = useState<boolean>(false);
+    // Using UseRef For Unnecessary Re-Render
+    const emailRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
 
     const navigate = useNavigate();
 
     const handleSignIn = async (e: FormEvent) => {
         e.preventDefault();
+        const email = emailRef.current?.value;
+        const Password = passwordRef.current?.value;
+
+        if (!email || !Password) {
+            toast.error("Please fill all the required field");
+            return;
+        };
 
         const EmailRegix = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (!email) {
-            toast.error("Please fill all the required field");
-            return;
-        }
-
         if (!EmailRegix.test(email)) {
-            toast.error("Invalid Email")
+            toast.loading("Invalid Email")
             return;
         };
 
-        const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-+.])(?=.{8,})/;
+        const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])(?=.{6,})/;
 
-        if (strongRegex.test(Password)) {
-            toast.error("Password must be at least 6 characters long, include uppercase, lowercase, number, and special character ");
+        if (!strongRegex.test(Password) || Password.length < 6) {
+            toast.loading("Password must be at least 6 characters long, include uppercase, lowercase, number, and special character ");
         };
-        if (Password.length < 6) {
-            toast.error("Password must be at least 6 characters long, include uppercase, lowercase, number, and special character");
-            return;
-        };
+
         try {
             // 2. Backend API Call (Example)
             const response = await axios.post('http://localhost:5000/api/auth/login', {
                 email,
                 Password
             });
-
+            // if successfully data send to backend then redirect to dashboard page 
             if (response.data.success) {
                 toast.success('Registration Successful!', {
                     className: 'border-2 border-green-500 bg-green-50 text-green-800 rounded-lg shadow-lg',
@@ -51,20 +53,23 @@ const LoginPage = () => {
                 navigate('/dashboard');
             };
         } catch (err) {
+            // if any error it show on UI
             if (err instanceof Error) {
-                toast(err.message)
+                toast.error(err.message)
                 console.log(err.message)
             } else {
-                toast("Registration Failed")
+                toast.error("Login Failed")
             }
         }
     };
+    // Redirect to register page
+    const RegisterPage = () => {
+        navigate("/register")
+    }
+    // Apple login are not available, comming soon!
     function ClickOnAppleIcon() {
         toast.error("comming soon, use another method")
     };
-    const Register = () => {
-        navigate("/register")
-    }
 
     return (
         <section className="flex items-center min-h-[85vh] justify-center bg-gray-50 p-4 py-10">
@@ -86,15 +91,15 @@ const LoginPage = () => {
                 {/* Right Side: Form */}
                 <div className="w-full p-8 md:w-1/2 lg:p-10">
                     <h2 className="text-xl text-center md:text-start font-bold text-[#224855]">Welcome to Membership Console</h2>
-                    <button onClick={Register} className="mb-6 mt-1 text-xs cursor-pointer font-semibold text-[#2D7A7B]">Sign Up to Continue</button>
+                    <button onClick={RegisterPage} className="mb-6 mt-1 text-xs cursor-pointer font-semibold text-[#2D7A7B]">Sign Up to Continue</button>
                     {/* Add Data in form and send to backend */}
                     <form className="space-y-3">
                         <div>
                             <label className="block text-xs font-medium text-gray-700">Enter Email Address</label>
                             <input
                                 type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                ref={emailRef}
+                                autoComplete="current-email"
                                 placeholder="abc@gmail.com"
                                 className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-[#2D7A7B] focus:outline-none"
                             />
@@ -102,13 +107,22 @@ const LoginPage = () => {
 
                         <div>
                             <label className="block text-xs font-medium text-gray-700">Enter Your Password</label>
-                            <input
-                                type="password"
-                                value={Password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="••••••••"
-                                className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-[#2D7A7B] focus:outline-none"
-                            />
+                            <div className='relative'>
+                                <input
+                                    type={show ? "text" : "password"}
+                                    placeholder="••••••••"
+                                    ref={passwordRef}
+                                    autoComplete='current-password'
+                                    className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-[#2D7A7B] focus:outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShow(!show)}
+                                    className="absolute right-3 top-6 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                    {show ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                             <div className="mt-1 text-right">
                                 <a href="#" className="text-[10px] font-semibold text-gray-500 hover:text-[#2D7A7B]">Forgot Password</a>
                             </div>

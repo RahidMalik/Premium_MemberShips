@@ -2,21 +2,29 @@ import { FacebookSignUp } from '@/Utilities/FacebookAutho';
 import { loginWithGoogle } from '@/Utilities/GoogleAutho';
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import axios from "axios"
 import toast from 'react-hot-toast';
+import { useRef } from "react";
 
 
 const SignUpPage = () => {
 
-    const [firstName, setFirstName] = useState<string>('');
-    const [lastName, setLastName] = useState<string>('');
-    const [email, setEmail] = useState<string>("");
-    const [Password, setPassword] = useState<string>("");
+    const [show, setShow] = useState<boolean>(false)
+
+    const firstNameref = useRef<HTMLInputElement>(null);
+    const lastNameref = useRef<HTMLInputElement>(null);
+    const emailRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
 
     const navigate = useNavigate();
 
-    const handleSignIn = async (e: FormEvent) => {
+    const handleSignUp = async (e: FormEvent) => {
         e.preventDefault();
+        const email = emailRef.current?.value;
+        const Password = passwordRef.current?.value;
+        const firstName = firstNameref.current?.value;
+        const lastName = lastNameref.current?.value;
 
         if (!email || !Password || !firstName || !lastName) {
             toast.error("Please fill all the required field");
@@ -25,23 +33,14 @@ const SignUpPage = () => {
 
         const EmailRegix = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (!email) {
-            toast.error("Please fill all the required field");
-            return;
-        }
-
         if (!EmailRegix.test(email)) {
             toast.error("Invalid Email")
             return;
         }
-        const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-+.])(?=.{8,})/;
+        const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-+.])(?=.{6,})/;
 
-        if (strongRegex.test(Password)) {
-            toast.error("Password must be at least 6 characters long, include uppercase, lowercase, number, and special character ");
-        };
-        if (Password.length < 6) {
-            toast.error("Password must be at least 6 characters long, include uppercase, lowercase, number, and special character");
-            return;
+        if (!strongRegex.test(Password) || Password.length < 6) {
+            toast.loading("Password must be at least 6 characters long, include uppercase, lowercase, number, and special character ");
         };
         const fullUsername = `${firstName} ${lastName}`.trim();
         try {
@@ -54,19 +53,23 @@ const SignUpPage = () => {
 
             if (response.data.success) {
                 console.log("Registration Successful!");
+                toast.success("Registration Successful!")
                 navigate('/dashboard');
             }
         } catch (err) {
             if (err instanceof Error) {
-                toast(err.message)
+                toast.error(err.message)
                 console.log(err.message)
             } else {
-                toast("Registration Failed")
+                toast.error("Registration Failed")
             }
         }
     };
+    const LoginPage = () => {
+        navigate("/login")
+    }
     function ClickOnAppleIcon() {
-        alert("comming soon, use another method")
+        toast.error("comming soon, use another method")
     }
 
 
@@ -91,7 +94,7 @@ const SignUpPage = () => {
                 {/* Right Side: Form */}
                 <div className="w-full p-8 md:w-1/2 lg:p-10">
                     <h2 className="text-xl text-center md:text-start font-bold text-[#224855]">Welcome to Membership Console</h2>
-                    <button className="mb-6 mt-1 text-xs cursor-pointer font-semibold text-[#2D7A7B]">Sign In to Continue</button>
+                    <button onClick={LoginPage} className="mb-6 mt-1 text-xs cursor-pointer font-semibold text-[#2D7A7B]">Sign In to Continue</button>
 
                     <form className="space-y-3">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -99,8 +102,7 @@ const SignUpPage = () => {
                                 <label className="block text-xs font-medium text-gray-700">Enter First Name</label>
                                 <input
                                     type="text"
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
+                                    ref={firstNameref}
                                     placeholder="First Name"
                                     className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-[#2D7A7B] focus:outline-none"
                                 />
@@ -109,8 +111,7 @@ const SignUpPage = () => {
                                 <label className="block text-xs font-medium text-gray-700">Enter Last Name</label>
                                 <input
                                     type="text"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
+                                    ref={lastNameref}
                                     placeholder="Last Name"
                                     className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-[#2D7A7B] focus:outline-none"
                                 />
@@ -121,8 +122,8 @@ const SignUpPage = () => {
                             <label className="block text-xs font-medium text-gray-700">Enter Email Address</label>
                             <input
                                 type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                ref={emailRef}
+                                autoComplete="new-email"
                                 placeholder="abc@gmail.com"
                                 className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-[#2D7A7B] focus:outline-none"
                             />
@@ -130,19 +131,29 @@ const SignUpPage = () => {
 
                         <div>
                             <label className="block text-xs font-medium text-gray-700">Enter Your Password</label>
-                            <input
-                                type="password"
-                                placeholder="••••••••"
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-[#2D7A7B] focus:outline-none"
-                            />
+                            <div className='relative'>
+                                <input
+                                    type={show ? "text" : "password"}
+                                    placeholder="••••••••"
+                                    autoComplete="new-password"
+                                    ref={passwordRef}
+                                    className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-[#2D7A7B] focus:outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShow(!show)}
+                                    className="absolute right-3 top-6 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                    {show ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                             <div className="mt-1 text-right">
                                 <a href="#" className="text-[10px] font-semibold text-gray-500 hover:text-[#2D7A7B]">Forgot Password</a>
                             </div>
                         </div>
 
-                        <button onClick={handleSignIn} className="w-full rounded-lg bg-[#2D7A7B] py-2.5 text-sm font-semibold text-white transition hover:bg-[#246162]">
-                            Sign In
+                        <button onClick={handleSignUp} className="w-full rounded-lg bg-[#2D7A7B] py-2.5 text-sm font-semibold text-white transition hover:bg-[#246162]">
+                            Sign Up
                         </button>
 
                         <div className="relative my-4 flex items-center">
@@ -167,8 +178,8 @@ const SignUpPage = () => {
                         </div>
                     </form>
                 </div>
-            </div>
-        </section>
+            </div >
+        </section >
     );
 };
 
